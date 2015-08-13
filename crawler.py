@@ -64,8 +64,14 @@ class Crawler(object):
     def article_parser(self, url):
         soup = self.get_soup(url)
         article = soup.find("div", {"id": "article"})
+        title = article.find("h2").text.strip()
+        sponsor = article.find("a", {"class": "spon_media"}).text.strip()
+        date_tags = article.find_all("span", {"class": "date"})
+        pubdate = date_tags[0].text.strip()
+        if len(date_tags) > 1:
+            modi_date = date_tags[1].text.strip()
         body = article.find("div", {"id": "article_body"})
-        print(body)
+        print(title, sponsor, pubdate)
 
 
 if __name__ == '__main__':
