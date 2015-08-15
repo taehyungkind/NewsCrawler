@@ -66,15 +66,29 @@ class Crawler(object):
         article = soup.find("div", {"id": "article"})
         title = article.find("h2").text.strip()
         sponsor = article.find("a", {"class": "spon_media"}).text.strip()
-        date_tags = article.find_all("span", {"class": "date"})
-        pubdate = date_tags[0].text.strip()
-        if len(date_tags) > 1:
-            modi_date = date_tags[1].text.strip()
+
+        pub_date, modified_date = self.get_dates(article.find_all("span", {"class": "date"}))
         body = article.find("div", {"id": "article_body"})
-        print(title, sponsor, pubdate)
+
+        print(title, sponsor, pub_date, modified_date)
+        text = body.prettify()
+        text = text.replace("<br/>", "\n")
+        print(text)
+
+    # 날짜를 가져오는 함수이다. 최초작성시간과 수정날짜를 가져온다.
+    @staticmethod
+    def get_dates(element):
+        pub_date = element[0].text.strip()
+        if len(element) > 1:
+            modified_date = element[1].text.strip()
+        else:
+            modified_date = None
+        return pub_date, modified_date
 
 
 if __name__ == '__main__':
     crawler = Crawler()
-    crawler.get_popular_news_list()
-    crawler.get_category_news_list("IT")
+    # crawler.get_popular_news_list()
+    # crawler.get_category_news_list("IT")
+
+    crawler.article_parser("http://news.zum.com/articles/24291861?t=t&cm=popular")
