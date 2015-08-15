@@ -64,16 +64,23 @@ class Crawler(object):
     def article_parser(self, url):
         soup = self.get_soup(url)
         article = soup.find("div", {"id": "article"})
+
         title = article.find("h2").text.strip()
-        sponsor = article.find("a", {"class": "spon_media"}).text.strip()
-
+        sponsor = article.find("a", {"class": "spon_media"})
+        sponsor_name, sponsor_url = sponsor.text.strip(), sponsor.get("href")
+        origin_url = article.find("a", {"class": "basic_doc"}).get("href")
         pub_date, modified_date = self.get_dates(article.find_all("span", {"class": "date"}))
-        body = article.find("div", {"id": "article_body"})
+        print(title, sponsor_name, sponsor_url, pub_date, modified_date, origin_url)
 
-        print(title, sponsor, pub_date, modified_date)
-        text = body.prettify()
-        text = text.replace("<br/>", "\n")
-        print(text)
+        body = article.find("div", {"id": "article_body"})
+        images = self.get_images(body)
+        print(images)
+
+        # text = body.prettify()
+        # text = text.replace("<br/>", "\n")
+        temp = str(body).replace("<br/>", "\n")
+        temp = BeautifulSoup(temp)
+        print(temp)
 
     # 날짜를 가져오는 함수이다. 최초작성시간과 수정날짜를 가져온다.
     @staticmethod
@@ -85,10 +92,28 @@ class Crawler(object):
             modified_date = None
         return pub_date, modified_date
 
+    # 이미지 정보를 추출하고 위치를 지정하는 함수
+    @staticmethod
+    def get_images(body):
+        img_list = []
+        for tag in body.find_all("table"):
+            url = tag.find("img").get("src")
+            _desc = tag.find("p", {"class": "img_title"})
+            if _desc is None:
+                desc = None
+            else:
+                desc = _desc.text.strip()
+            tag.next_sibling.append("{ image }")
+            tag.extract()
+            img_list.append({"url": url, "description": desc})
+
+        return img_list
+
 
 if __name__ == '__main__':
     crawler = Crawler()
     # crawler.get_popular_news_list()
     # crawler.get_category_news_list("IT")
 
-    crawler.article_parser("http://news.zum.com/articles/24291861?t=t&cm=popular")
+    article_url = 'http://news.zum.com/articles/24291861'
+    crawler.article_parser(article_url)
