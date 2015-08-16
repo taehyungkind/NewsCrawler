@@ -76,38 +76,56 @@ class Crawler(object):
         images = self.get_images(body)
         print(images)
 
+        keywords = self.get_keywords(body)
+        print(keywords)
+
         # text = body.prettify()
         # text = text.replace("<br/>", "\n")
-        temp = str(body).replace("<br/>", "\n")
-        temp = BeautifulSoup(temp)
-        print(temp)
+        content = str(body).replace("<br/>", "\n")
+        content = BeautifulSoup(content).text
+        print(content)
+        print({
+            'pub_date': pub_date,
+            'modi_date': modified_date
+        })
 
     # 날짜를 가져오는 함수이다. 최초작성시간과 수정날짜를 가져온다.
     @staticmethod
     def get_dates(element):
         pub_date = element[0].text.strip()
-        if len(element) > 1:
-            modified_date = element[1].text.strip()
-        else:
-            modified_date = None
-        return pub_date, modified_date
+        try:
+            return pub_date, element[1].text.strip()
+        except IndexError:
+            return pub_date, None
 
     # 이미지 정보를 추출하고 위치를 지정하는 함수
+    # 이미지 위치에는 { image }만 남기고 이미지에 관련된 태그는 모조리 삭제해버린다.
     @staticmethod
     def get_images(body):
         img_list = []
         for tag in body.find_all("table"):
             url = tag.find("img").get("src")
-            _desc = tag.find("p", {"class": "img_title"})
-            if _desc is None:
+
+            try:
+                desc = tag.find("p", {"class": "img_title"}).text.strip()
+            except AttributeError:
                 desc = None
-            else:
-                desc = _desc.text.strip()
             tag.next_sibling.append("{ image }")
             tag.extract()
             img_list.append({"url": url, "description": desc})
 
         return img_list
+
+    # 키워드를 추출해내는 함수이다. 맨위에만 붙는다고 가정하고 지워버린다.
+    @staticmethod
+    def get_keywords(body):
+        keywords = [tag.text for tag in body.find_all("p", {"class": "keyword"})]
+
+        try:
+            body.find("div", {"class": "keyword_wrap"}).extract()
+        except AttributeError:
+            pass
+        return keywords
 
 
 if __name__ == '__main__':
