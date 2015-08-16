@@ -84,10 +84,6 @@ class Crawler(object):
         content = str(body).replace("<br/>", "\n")
         content = BeautifulSoup(content).text
         print(content)
-        print({
-            'pub_date': pub_date,
-            'modi_date': modified_date
-        })
 
     # 날짜를 가져오는 함수이다. 최초작성시간과 수정날짜를 가져온다.
     @staticmethod
@@ -110,7 +106,7 @@ class Crawler(object):
                 desc = tag.find("p", {"class": "img_title"}).text.strip()
             except AttributeError:
                 desc = None
-            tag.next_sibling.append("{ image }")
+            tag.parent.insert(tag.parent.contents.index(tag), "{ image }")
             tag.extract()
             img_list.append({"url": url, "description": desc})
 
@@ -130,8 +126,8 @@ class Crawler(object):
 
 if __name__ == '__main__':
     crawler = Crawler()
-    # crawler.get_popular_news_list()
-    # crawler.get_category_news_list("IT")
+    crawler.get_popular_news_list()
+    crawler.get_category_news_list("IT")
 
-    article_url = 'http://news.zum.com/articles/24291861'
-    crawler.article_parser(article_url)
+    # article_url = 'http://news.zum.com/articles/24306478?cm=popular'
+    # crawler.article_parser(article_url)
