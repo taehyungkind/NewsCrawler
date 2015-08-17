@@ -62,6 +62,7 @@ class Crawler(object):
 
     # 기사의 데이터를 가져온다.
     def article_parser(self, url):
+        print(url)
         soup = self.get_soup(url)
         article = soup.find("div", {"id": "article"})
 
@@ -110,6 +111,7 @@ class Crawler(object):
             tag.extract()
             img_list.append({"url": url, "description": desc})
 
+        [tag.extract() for tag in body.find_all("p", {"class": "img_title"})]
         return img_list
 
     # 키워드를 추출해내는 함수이다. 맨위에만 붙는다고 가정하고 지워버린다.
