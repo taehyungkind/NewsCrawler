@@ -1,7 +1,7 @@
 
 from crawler import Crawler
-import requests
 from urllib.request import urljoin
+
 
 class ZumCrawler(Crawler):
 
@@ -24,9 +24,8 @@ class ZumCrawler(Crawler):
     # 종합 뉴스의 처리는 일단 나중에 하자.
     @staticmethod
     def ul_tag_parser(soup):
-        li_list = soup.find_all("li")
         article_list = []
-        for li in li_list:
+        for li in soup.find_all("li"):
             article_dict = {}
             info = li.find("span")
             article_dict.setdefault(info.get("class")[0], info.text.strip())
