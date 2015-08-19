@@ -1,6 +1,7 @@
 
 import requests
 from bs4 import BeautifulSoup
+from urllib.request import urljoin
 
 
 class Crawler(object):
@@ -23,4 +24,12 @@ class Crawler(object):
 
     # 카테고리를 입력하면 카테고리의 뉴스 리스트를 가져온다.
     def get_category_news_list(self, category):
-        pass
+        news_list = self.category_news_mapper.get(category)
+        if news_list is None:
+            print("카테고리를 정확히 입력해주세요")
+            return
+
+        for news in news_list:
+            url = urljoin(self.url, news["href"])
+            # self.article_parser(url)
+            print(news, url)

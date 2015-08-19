@@ -1,6 +1,5 @@
 
 from crawler import Crawler
-from urllib.request import urljoin
 
 
 class ZumCrawler(Crawler):
@@ -37,19 +36,6 @@ class ZumCrawler(Crawler):
             article_dict.setdefault("id", href[href.find("s/") + 2: href.find("?")])
             article_list.append(article_dict)
         return article_list
-
-    # 카테고리를 입력하면 카테고리의 뉴스 리스트를 가져온다.
-    # 우선은 기사 데이터까지 가져오자!
-    def get_category_news_list(self, category):
-        news_list = self.category_news_mapper.get(category)
-        if news_list is None:
-            print("카테고리를 정확히 입력해주세요")
-            return
-
-        for news in news_list:
-            url = urljoin(self.url, news["href"])
-            # self.article_parser(url)
-            print(news, url)
 
     # # 기사의 데이터를 가져온다.
     # def article_parser(self, url):
