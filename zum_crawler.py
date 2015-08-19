@@ -4,12 +4,12 @@ from crawler import Crawler
 
 class ZumCrawler(Crawler):
 
-    def __init__(self, url):
-        super(self.__class__, self).__init__(url)
+    def __init__(self):
+        super(self.__class__, self).__init__("http://news.zum.com")
 
     # 카테고리를 찾아서 카테고리 리스트에 넣어두고
     # 카테고리 항목에 맞는 뉴스 리스트를 맵핑시켜준다
-    def get_popular_news_list(self):
+    def crawl_popular_news_list(self):
         popular_list = self.soup.find("div", {"class": "list list_1"})
         category_tag_list = popular_list.find_all("h4")
         self.category_list = [tag.text.strip() for tag in category_tag_list]
@@ -104,6 +104,6 @@ class ZumCrawler(Crawler):
 
 
 if __name__ == '__main__':
-    crawler = ZumCrawler("http://news.zum.com")
-    crawler.get_popular_news_list()
+    crawler = ZumCrawler()
+    crawler.crawl_popular_news_list()
     crawler.get_category_news_list("IT")

@@ -8,14 +8,12 @@ class NaverCrawler(Crawler):
     def __init__(self):
         super(self.__class__, self).__init__("http://news.naver.com/main/home.nhn")
 
-    def get_popular_news_list(self):
+    def crawl_popular_news_list(self):
         for dummy in ["ranking_10" + str(num) for num in range(8)]:
             chunk = self.soup.find("div", {"id": dummy})
             category = chunk.find("h5", {"class": "blind"}).text.strip()
             self.category_list.append(category)
-            print(category)
             self.category_news_mapper.setdefault(category, self.ul_tag_parser(chunk.find("ul")))
-            print()
 
     @staticmethod
     def ul_tag_parser(soup):
@@ -34,11 +32,11 @@ class NaverCrawler(Crawler):
             except KeyError:
                 article_dict.setdefault("id", query_param["article_id"][0])
             article_list.append(article_dict)
-            print(article_dict)
 
         return article_list
 
 
 if __name__ == '__main__':
     crawler = NaverCrawler()
-    crawler.get_popular_news_list()
+    crawler.crawl_popular_news_list()
+    crawler.get_category_news_list(crawler.category_list[2])

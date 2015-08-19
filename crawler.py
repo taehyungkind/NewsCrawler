@@ -19,7 +19,7 @@ class Crawler(object):
 
     # 카테고리를 찾아서 카테고리 리스트에 넣어두고
     # 카테고리 항목에 맞는 뉴스 리스트를 맵핑시켜준다
-    def get_popular_news_list(self):
+    def crawl_popular_news_list(self):
         pass
 
     # 카테고리를 입력하면 카테고리의 뉴스 리스트를 가져온다.
@@ -29,7 +29,7 @@ class Crawler(object):
             print("카테고리를 정확히 입력해주세요")
             return
 
+        print(category)
         for news in news_list:
             url = urljoin(self.url, news["href"])
-            # self.article_parser(url)
-            print(news, url)
+            print(news["title"], url)
