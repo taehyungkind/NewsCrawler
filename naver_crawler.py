@@ -1,6 +1,6 @@
 
 from crawler import Crawler
-from urllib.parse import urlparse, parse_qs
+from urllib.parse import urlparse, parse_qs, urljoin
 
 
 class NaverCrawler(Crawler):
@@ -15,8 +15,7 @@ class NaverCrawler(Crawler):
             self.category_list.append(category)
             self.category_news_mapper.setdefault(category, self.ul_tag_parser(chunk.find("ul")))
 
-    @staticmethod
-    def ul_tag_parser(soup):
+    def ul_tag_parser(self, soup):
         article_list = []
         for li in soup.find_all("li"):
             article_dict = {}
@@ -24,7 +23,7 @@ class NaverCrawler(Crawler):
             a_tag = li.find("a", {"class": "nclicks(rig.ranking)"})
             article_dict.setdefault("title", a_tag.text.strip())
             href = a_tag.get("href")
-            article_dict.setdefault("href", href)
+            article_dict.setdefault("href", urljoin(self.url, href))
 
             query_param = parse_qs(urlparse(href).query)
             try:

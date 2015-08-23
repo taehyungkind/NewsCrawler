@@ -32,4 +32,5 @@ class Crawler(object):
         print(category)
         for news in news_list:
             url = urljoin(self.url, news["href"])
-            print(news["title"], url)
+            print(url)
+            print(news["title"], news["href"])

@@ -1,5 +1,6 @@
 
 from crawler import Crawler
+from urllib.parse import urljoin
 
 
 class ZumCrawler(Crawler):
@@ -21,8 +22,7 @@ class ZumCrawler(Crawler):
     # BeautifulSoup 객체 상태인 ul태그를 li로 쪼개고
     # 필요한 정보만 가져오도록 한다. 제목, path, 기사의 고유번호인 id, 랭킹을 가져온다
     # 종합 뉴스의 처리는 일단 나중에 하자.
-    @staticmethod
-    def ul_tag_parser(soup):
+    def ul_tag_parser(self, soup):
         article_list = []
         for li in soup.find_all("li"):
             article_dict = {}
@@ -32,7 +32,7 @@ class ZumCrawler(Crawler):
             tag = li.find("a")
             article_dict.setdefault("title", tag.get("title"))
             href = tag.get("href")
-            article_dict.setdefault("href", href[: href.find("?")])
+            article_dict.setdefault("href", urljoin(self.url, href[: href.find("?")]))
             article_dict.setdefault("id", href[href.find("s/") + 2: href.find("?")])
             article_list.append(article_dict)
         return article_list
