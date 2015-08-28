@@ -1,4 +1,5 @@
 # from django.shortcuts import render
+from .models import *
 from django.shortcuts import HttpResponse
 from .daum_crawler import DaumCrawler
 from .nate_crawler import NateCrawler
