@@ -1,5 +1,5 @@
 
-from crawler import Crawler
+from .crawler import Crawler
 from urllib.parse import urlparse
 
 

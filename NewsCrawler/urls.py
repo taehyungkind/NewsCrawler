@@ -18,4 +18,6 @@ from django.contrib import admin
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
+
+    url(r'^test/', "crawl.views.daum_crawl", name="crawl")
 ]
