@@ -1,6 +1,5 @@
-from django.shortcuts import render
+# from django.shortcuts import render
 from django.shortcuts import HttpResponse
-from .crawler import Crawler
 from .daum_crawler import DaumCrawler
 from .nate_crawler import NateCrawler
 from .naver_crawler import NaverCrawler
@@ -9,8 +8,17 @@ import json
 # Create your views here.
 
 
-def daum_crawl(request):
-    crawler = DaumCrawler()
+def crawl(request, host):
+    print(host)
+    host_dict = {
+        "daum": DaumCrawler,
+        "nate": NateCrawler,
+        "naver": NaverCrawler,
+        "zum": ZumCrawler
+    }
+    crawler = host_dict[host]()
     crawler.crawl_popular_news_list()
-    news_list = crawler.get_category_news_list("digital")
+    print(crawler.category_list)
+    news_list = crawler.get_category_news_list(crawler.category_list[0])
+
     return HttpResponse(json.dumps(news_list))

@@ -1,7 +1,6 @@
 
 import requests
 from bs4 import BeautifulSoup
-from urllib.request import urljoin
 
 
 class Crawler(object):
@@ -27,11 +26,11 @@ class Crawler(object):
         news_list = self.category_news_mapper.get(category)
         if news_list is None:
             print("카테고리를 정확히 입력해주세요")
-            return
+            return []
 
-        print(category)
-        for news in news_list:
-            url = urljoin(self.url, news["href"])
-            print(url)
-            print(news["title"], news["href"])
+        # print(category)
+        # for news in news_list:
+        #     url = urljoin(self.url, news["href"])
+        #     print(url)
+        #     print(news["title"], news["href"])
         return news_list

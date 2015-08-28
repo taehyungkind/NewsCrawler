@@ -19,5 +19,5 @@ from django.contrib import admin
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
 
-    url(r'^test/', "crawl.views.daum_crawl", name="crawl")
+    url(r'^crawl/(?P<host>daum|nate|naver|zum)', "crawl.views.crawl", name="crawl")
 ]
