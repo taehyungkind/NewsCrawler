@@ -1,6 +1,7 @@
 
 from .crawler import Crawler
 from urllib.parse import urlparse
+import re
 
 
 class NateCrawler(Crawler):
@@ -48,7 +49,8 @@ class NateCrawler(Crawler):
 
     @staticmethod
     def href_to_id(href):
-        return urlparse(href).path[6:]
+        id = re.match(r"/(\w+)/(?P<id>\w+)", urlparse(href).path)
+        return id.group('id')
 
 
 if __name__ == '__main__':

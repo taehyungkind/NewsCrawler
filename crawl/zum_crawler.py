@@ -1,6 +1,7 @@
 
 from .crawler import Crawler
 from urllib.parse import urljoin
+import re
 
 
 class ZumCrawler(Crawler):
@@ -12,8 +13,7 @@ class ZumCrawler(Crawler):
     # 카테고리 항목에 맞는 뉴스 리스트를 맵핑시켜준다
     def crawl_popular_news_list(self):
         popular_list = self.soup.find("div", {"class": "list list_1"})
-        category_tag_list = popular_list.find_all("h4")
-        self.category_list = [tag.text.strip() for tag in category_tag_list]
+        self.category_list = [tag.text.strip() for tag in popular_list.find_all("h4")]
 
         category_news_list = popular_list.find_all("ul", {"class": "rank_news"})
         for idx, ul_tag in enumerate(category_news_list):
@@ -24,16 +24,16 @@ class ZumCrawler(Crawler):
     # 종합 뉴스의 처리는 일단 나중에 하자.
     def ul_tag_parser(self, soup):
         article_list = []
-        for li in soup.find_all("li"):
+        for rank, li in enumerate(soup.find_all("li")):
             article_dict = {}
-            info = li.find("span")
-            article_dict.setdefault(info.get("class")[0], info.text.strip())
+            article_dict.setdefault("rank", rank + 1)
 
             tag = li.find("a")
             article_dict.setdefault("title", tag.get("title"))
             href = tag.get("href")
             article_dict.setdefault("href", urljoin(self.url, href[: href.find("?")]))
-            article_dict.setdefault("id", href[href.find("s/") + 2: href.find("?")])
+            id = re.match(r"/(\w+)/(?P<id>\d+)", href)
+            article_dict.setdefault("id", id.group('id'))
             article_list.append(article_dict)
         return article_list
 

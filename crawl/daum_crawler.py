@@ -1,6 +1,7 @@
 
 from .crawler import Crawler
 from urllib.parse import urljoin
+import re
 
 
 class DaumCrawler(Crawler):
@@ -25,7 +26,8 @@ class DaumCrawler(Crawler):
             article_dict.setdefault("title", a_tag.text.strip())
             href = a_tag.get("href")
             article_dict.setdefault("href", urljoin(self.url, href))
-            article_dict.setdefault("id", href[3:])
+            id = re.match(r"/(\w+)/(?P<id>\d+)", href)
+            article_dict.setdefault("id", id.group('id'))
             article_list.append(article_dict)
 
         return article_list
