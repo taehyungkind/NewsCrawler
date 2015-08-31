@@ -8,33 +8,47 @@ from .naver_crawler import NaverCrawler
 from .zum_crawler import ZumCrawler
 from django.utils import timezone
 import json
+
+from datetime import datetime
+from time import mktime
+import time
 # Create your views here.
 
 @transaction.atomic(using="crawl", savepoint=True)
-def crawl(request, host):
+def crawl(request):
     ArticleRank.objects.all().update(view=False)
 
+    host_list = ["daum", "nate", "naver", "zum"]
     host_dict = {
         "daum": DaumCrawler,
         "nate": NateCrawler,
         "naver": NaverCrawler,
         "zum": ZumCrawler
     }
-    crawler = host_dict[host]()
-    crawler.crawl_popular_news_list()
 
-    h = Host.objects.get(name=host)
+    for host in host_list:
+        crawler = host_dict[host]()
+        crawler.crawl_popular_news_list()
 
-    for cate in crawler.category_list:
-        news_list = crawler.get_category_news_list(cate)
-        category = Category.objects.get(host=h, name=cate)
-        for news in news_list:
-            article = Article(id=news['id'], title=news['title'], url=news['url'], host=h, category=category)
-            article.save()
-            ArticleRank(article=article, rank=news['rank'], time=timezone.localtime(timezone.now())).save()
-            print(news)
+        h = Host.objects.get(name=host)
+        for cate in crawler.category_list:
+            news_list = crawler.get_category_news_list(cate)
+            category = Category.objects.get(host=h, name=cate)
+            for news in news_list:
+                article = Article(id=news['id'], title=news['title'], url=news['url'], host=h, category=category)
+                article.save()
+                ArticleRank(article=article, rank=news['rank'], time=get_timezone_now()).save()
+                # timezone.localtime(timezone.now())).save()
+                print(news)
 
     return HttpResponse(json.dumps({'status': "ok"}))
+
+
+def get_timezone_now():
+    now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    now = time.strptime(now, "%Y-%m-%d %H:%M:%S")
+    now = datetime.fromtimestamp(mktime(now)).replace(tzinfo=timezone.utc)
+    return now
 
 
 def test(request):

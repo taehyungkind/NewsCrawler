@@ -19,6 +19,7 @@ from django.contrib import admin
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
 
-    url(r'^crawl/(?P<host>daum|nate|naver|zum)', "crawl.views.crawl", name="crawl"),
+    url(r'^crawl/$', "crawl.views.crawl", name="crawl"),
+    url(r'^news/(?P<host>daum|nate|naver|zum)', "crawl.views.crawl", name="crawl"),
     url(r'^test/$', "crawl.views.test", name="test")
 ]
