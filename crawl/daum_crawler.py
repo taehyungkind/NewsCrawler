@@ -25,7 +25,7 @@ class DaumCrawler(Crawler):
             a_tag = li.find("div", {"class": "cont_thumb"}).find("a", {"class": "link_txt"})
             article_dict.setdefault("title", a_tag.text.strip())
             href = a_tag.get("href")
-            article_dict.setdefault("href", urljoin(self.url, href))
+            article_dict.setdefault("url", urljoin(self.url, href))
             id = re.match(r"/(\w+)/(?P<id>\d+)", href)
             article_dict.setdefault("id", id.group('id'))
             article_list.append(article_dict)

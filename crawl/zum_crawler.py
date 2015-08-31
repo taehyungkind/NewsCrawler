@@ -31,7 +31,7 @@ class ZumCrawler(Crawler):
             tag = li.find("a")
             article_dict.setdefault("title", tag.get("title"))
             href = tag.get("href")
-            article_dict.setdefault("href", urljoin(self.url, href[: href.find("?")]))
+            article_dict.setdefault("url", urljoin(self.url, href[: href.find("?")]))
             id = re.match(r"/(\w+)/(?P<id>\d+)", href)
             article_dict.setdefault("id", id.group('id'))
             article_list.append(article_dict)

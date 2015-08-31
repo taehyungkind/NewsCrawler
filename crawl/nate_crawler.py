@@ -27,7 +27,7 @@ class NateCrawler(Crawler):
             article_dict["rank"] = rank + 1
             article_dict["title"] = a_tag.find("strong", {"class": "tit"}).text.strip()
             href = a_tag.get("href")
-            article_dict["href"] = href
+            article_dict["url"] = href
             article_dict["id"] = self.href_to_id(href)
             article_list.append(article_dict)
 
@@ -41,7 +41,7 @@ class NateCrawler(Crawler):
             article_dict.setdefault("rank", rank + 6)
             article_dict.setdefault("title", a_tag.text.strip())
             href = a_tag.get("href")
-            article_dict.setdefault("href", href)
+            article_dict.setdefault("url", href)
             article_dict.setdefault("id", self.href_to_id(href))
             article_list.append(article_dict)
 

@@ -15,28 +15,28 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.CharField(primary_key=True, max_length=30, unique=True, serialize=False)),
                 ('title', models.CharField(max_length=100)),
-                ('rank', models.IntegerField()),
                 ('url', models.CharField(max_length=400)),
             ],
         ),
         migrations.CreateModel(
             name='Category',
             fields=[
-                ('id', models.AutoField(primary_key=True, serialize=False, verbose_name='ID', auto_created=True)),
-                ('name', models.CharField(max_length=10, unique=True)),
+                ('id', models.AutoField(auto_created=True, verbose_name='ID', primary_key=True, serialize=False)),
+                ('name', models.CharField(unique=True, max_length=10)),
             ],
         ),
         migrations.CreateModel(
             name='Host',
             fields=[
-                ('id', models.AutoField(primary_key=True, serialize=False, verbose_name='ID', auto_created=True)),
-                ('name', models.CharField(max_length=10, unique=True)),
+                ('id', models.AutoField(auto_created=True, verbose_name='ID', primary_key=True, serialize=False)),
+                ('name', models.CharField(unique=True, max_length=10)),
             ],
         ),
         migrations.CreateModel(
             name='CrawlTime',
             fields=[
-                ('article_ptr', models.OneToOneField(primary_key=True, serialize=False, to='crawl.Article', parent_link=True, auto_created=True)),
+                ('article_ptr', models.OneToOneField(auto_created=True, parent_link=True, to='crawl.Article', primary_key=True, serialize=False)),
+                ('rank', models.IntegerField()),
                 ('time', models.DateTimeField()),
                 ('view', models.BooleanField(default=True)),
             ],
@@ -45,7 +45,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='category',
             name='host',
-            field=models.ForeignKey(unique=True, to='crawl.Host'),
+            field=models.ForeignKey(to='crawl.Host'),
         ),
         migrations.AddField(
             model_name='article',

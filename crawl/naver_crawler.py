@@ -23,7 +23,7 @@ class NaverCrawler(Crawler):
             a_tag = li.find("a", {"class": "nclicks(rig.ranking)"})
             article_dict.setdefault("title", a_tag.text.strip())
             href = a_tag.get("href")
-            article_dict.setdefault("href", urljoin(self.url, href))
+            article_dict.setdefault("url", urljoin(self.url, href))
 
             query_param = parse_qs(urlparse(href).query)
             try:
