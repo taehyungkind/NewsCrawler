@@ -28,3 +28,22 @@ def crawl(request, host):
     news_list = crawler.get_category_news_list(crawler.category_list[0])
 
     return HttpResponse(json.dumps(news_list))
+
+
+def test(request):
+    host_list = ["daum", "nate", "naver", "zum"]
+    host_dict = {
+        "daum": DaumCrawler,
+        "nate": NateCrawler,
+        "naver": NaverCrawler,
+        "zum": ZumCrawler
+    }
+
+    for host in host_list:
+        crawler = host_dict[host]()
+        host = Host(name=host, url=crawler.url)
+        host.save()
+        crawler.crawl_popular_news_list()
+        for category in crawler.category_list:
+            print(category)
+            Category(host=host, name=category).save()

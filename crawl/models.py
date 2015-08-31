@@ -10,7 +10,7 @@ class Host(models.Model):
 
 class Category(models.Model):
     host = models.ForeignKey(Host)
-    name = models.CharField(max_length=20, unique=True)
+    name = models.CharField(max_length=20)
 
 
 class Article(models.Model):
