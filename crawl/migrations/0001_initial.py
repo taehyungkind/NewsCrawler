@@ -13,34 +13,35 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Article',
             fields=[
-                ('id', models.CharField(primary_key=True, max_length=30, unique=True, serialize=False)),
+                ('id', models.CharField(primary_key=True, unique=True, serialize=False, max_length=50)),
                 ('title', models.CharField(max_length=100)),
-                ('url', models.CharField(max_length=400)),
+                ('url', models.CharField(max_length=500)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='ArticleRank',
+            fields=[
+                ('id', models.AutoField(primary_key=True, verbose_name='ID', serialize=False, auto_created=True)),
+                ('rank', models.IntegerField()),
+                ('time', models.DateTimeField()),
+                ('view', models.BooleanField(default=True)),
+                ('article', models.ForeignKey(to='crawl.Article')),
             ],
         ),
         migrations.CreateModel(
             name='Category',
             fields=[
-                ('id', models.AutoField(auto_created=True, verbose_name='ID', primary_key=True, serialize=False)),
-                ('name', models.CharField(unique=True, max_length=10)),
+                ('id', models.AutoField(primary_key=True, verbose_name='ID', serialize=False, auto_created=True)),
+                ('name', models.CharField(unique=True, max_length=20)),
             ],
         ),
         migrations.CreateModel(
             name='Host',
             fields=[
-                ('id', models.AutoField(auto_created=True, verbose_name='ID', primary_key=True, serialize=False)),
+                ('id', models.AutoField(primary_key=True, verbose_name='ID', serialize=False, auto_created=True)),
                 ('name', models.CharField(unique=True, max_length=10)),
+                ('url', models.CharField(max_length=100)),
             ],
-        ),
-        migrations.CreateModel(
-            name='CrawlTime',
-            fields=[
-                ('article_ptr', models.OneToOneField(auto_created=True, parent_link=True, to='crawl.Article', primary_key=True, serialize=False)),
-                ('rank', models.IntegerField()),
-                ('time', models.DateTimeField()),
-                ('view', models.BooleanField(default=True)),
-            ],
-            bases=('crawl.article',),
         ),
         migrations.AddField(
             model_name='category',

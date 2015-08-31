@@ -10,7 +10,6 @@ import json
 
 
 def crawl(request, host):
-    print(host)
     host_dict = {
         "daum": DaumCrawler,
         "nate": NateCrawler,
@@ -18,8 +17,14 @@ def crawl(request, host):
         "zum": ZumCrawler
     }
     crawler = host_dict[host]()
+
+    h = Host.objects.get(name=host)
     crawler.crawl_popular_news_list()
     print(crawler.category_list)
+    for category in crawler.category_list:
+        print(category)
+        Category(host=h, name=category).save()
+    print(h)
     news_list = crawler.get_category_news_list(crawler.category_list[0])
 
     return HttpResponse(json.dumps(news_list))

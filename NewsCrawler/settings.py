@@ -77,10 +77,35 @@ WSGI_APPLICATION = 'NewsCrawler.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+        'ENGINE': 'django.db.backends.mysql',
+        'HOST': '',
+        'PORT': '3306',
+        'USER': '',
+        'PASSWORD': '',
+        'NAME': 'crawl',
+        'OPTIONS': {
+            'charset': 'utf8',
+        }
+    },
+    'crawl': {
+        'ENGINE': 'django.db.backends.mysql',
+        'HOST': '',
+        'PORT': '3306',
+        'USER': '',
+        'PASSWORD': '',
+        'NAME': 'crawl',
+        'OPTIONS': {
+            'charset': 'utf8',
+        }
+    },
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#     }
+# }
 
 
 # Internationalization
