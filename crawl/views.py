@@ -26,20 +26,20 @@ def crawl(request):
         "zum": ZumCrawler
     }
 
-    for host in host_list:
-        crawler = host_dict[host]()
+    for host_name in host_list:
+        crawler = host_dict[host_name]()
         crawler.crawl_popular_news_list()
 
-        h = Host.objects.get(name=host)
-        for cate in crawler.category_list:
-            news_list = crawler.get_category_news_list(cate)
-            category = Category.objects.get(host=h, name=cate)
+        host = Host.objects.get(name=host_name)
+        for category_name in crawler.category_list:
+            news_list = crawler.get_category_news_list(category_name)
+            category = Category.objects.get(host=host, name=category_name)
             for news in news_list:
-                article = Article(id=news['id'], title=news['title'], url=news['url'])
+                article = Article(id=news['id'], title=news['title'], url=news['url'], host=host)
                 article.save()
                 ArticleRank(article=article, category=category, rank=news['rank'], time=get_timezone_now()).save()
                 # timezone.localtime(timezone.now())).save()
-                print(news)
+                # print(news)
 
     return HttpResponse(json.dumps({'status': "ok"}))
 

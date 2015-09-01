@@ -17,6 +17,7 @@ class Article(models.Model):
     id = models.CharField(max_length=50, primary_key=True, unique=True, null=False)
     title = models.CharField(max_length=100, null=False)
     url = models.CharField(max_length=500, null=False)
+    host = models.ForeignKey(Host)
 
 
 class ArticleRank(models.Model):
