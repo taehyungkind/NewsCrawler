@@ -35,9 +35,9 @@ def crawl(request):
             news_list = crawler.get_category_news_list(cate)
             category = Category.objects.get(host=h, name=cate)
             for news in news_list:
-                article = Article(id=news['id'], title=news['title'], url=news['url'], host=h, category=category)
+                article = Article(id=news['id'], title=news['title'], url=news['url'])
                 article.save()
-                ArticleRank(article=article, rank=news['rank'], time=get_timezone_now()).save()
+                ArticleRank(article=article, category=category, rank=news['rank'], time=get_timezone_now()).save()
                 # timezone.localtime(timezone.now())).save()
                 print(news)
 
@@ -49,6 +49,27 @@ def get_timezone_now():
     now = time.strptime(now, "%Y-%m-%d %H:%M:%S")
     now = datetime.fromtimestamp(mktime(now)).replace(tzinfo=timezone.utc)
     return now
+
+
+def get_now_news(request):
+    host_list = ["daum", "nate", "naver", "zum"]
+    host_dict = {
+        "daum": DaumCrawler,
+        "nate": NateCrawler,
+        "naver": NaverCrawler,
+        "zum": ZumCrawler
+    }
+
+    all_news = {}
+    all_news["host_list"] = host_list
+    for host in host_list:
+        crawler = host_dict[host]()
+        crawler.crawl_popular_news_list()
+        all_news[host] = {}
+        all_news[host]["news"] = crawler.category_news_mapper
+        all_news[host]["category_list"] = crawler.category_list
+
+    return HttpResponse(json.dumps(all_news))
 
 
 def test(request):

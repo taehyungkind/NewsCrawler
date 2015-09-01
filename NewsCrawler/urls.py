@@ -21,5 +21,7 @@ urlpatterns = [
 
     url(r'^crawl/$', "crawl.views.crawl", name="crawl"),
     url(r'^news/(?P<host>daum|nate|naver|zum)', "crawl.views.crawl", name="crawl"),
-    url(r'^test/$', "crawl.views.test", name="test")
+    url(r'^test/$', "crawl.views.test", name="test"),
+
+    url(r'^get/now/news/$', "crawl.views.get_now_news", name="all_news")
 ]
