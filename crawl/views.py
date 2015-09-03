@@ -75,7 +75,13 @@ def get_timezone_now():
 
 
 def get_host_category_names(request):
-    return HttpResponse(json.dumps({}))
+    host_list = Host.objects.all()
+    for host in host_list:
+        category_list = Category.objects.filter(host=host)
+    print(host_list)
+
+    last_crawl_time = ArticleRank.objects.all().order_by("-time")[0].time.strftime('%Y-%m-%d %H:%M:%S')
+    return HttpResponse(json.dumps({"result": last_crawl_time}))
 
 
 def get_now_news(request):
