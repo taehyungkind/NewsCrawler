@@ -11,6 +11,7 @@ import json
 from datetime import datetime
 from time import mktime
 import time
+import operator
 # Create your views here.
 
 
@@ -45,11 +46,12 @@ def crawl(request):
 
 
 def get_category_news(request, host_name, category_name):
-    host = Host.objects.get(name=host_name)
-    category = Category.objects.filter(host=host, name=category_name)
+    # host = Host.objects.get(name=host_name)
+    # category = Category.objects.filter(host=host, name=category_name)
+    category = Category.objects.filter(host__name=host_name, name=category_name)
 
     # articles = ArticleRank.objects.filter(category=category, view=True).select_related('article')
-    # TODO 조인방법을 찾아보자
+    # TODO 조인방법을 찾아보자 (딕셔너리로 바꾸고 서브쿼리 보내고 정렬하는 거 없이 한큐에!)
     rank_list = ArticleRank.objects.filter(category=category, view=True).values("article", "rank")
     rank_dict = dict([(rank['article'], rank['rank']) for rank in rank_list])
     articles = Article.objects.filter(id__in=rank_dict.keys())
@@ -61,8 +63,8 @@ def get_category_news(request, host_name, category_name):
             "title": article.title,
             "url": article.url,
         })
-
-    return HttpResponse(json.dumps(news_list))
+    ordered_news_list = sorted(news_list, key=operator.itemgetter('rank'))
+    return HttpResponse(json.dumps(ordered_news_list))
 
 
 def get_timezone_now():
