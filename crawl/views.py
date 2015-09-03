@@ -8,11 +8,11 @@ from .naver_crawler import NaverCrawler
 from .zum_crawler import ZumCrawler
 from django.utils import timezone
 import json
-
 from datetime import datetime
 from time import mktime
 import time
 # Create your views here.
+
 
 @transaction.atomic(using="crawl", savepoint=True)
 def crawl(request):
@@ -44,11 +44,36 @@ def crawl(request):
     return HttpResponse(json.dumps({'status': "ok"}))
 
 
+def get_category_news(request, host_name, category_name):
+    host = Host.objects.get(name=host_name)
+    category = Category.objects.filter(host=host, name=category_name)
+
+    # articles = ArticleRank.objects.filter(category=category, view=True).select_related('article')
+    # TODO 조인방법을 찾아보자
+    rank_list = ArticleRank.objects.filter(category=category, view=True).values("article", "rank")
+    rank_dict = dict([(rank['article'], rank['rank']) for rank in rank_list])
+    articles = Article.objects.filter(id__in=rank_dict.keys())
+
+    news_list = []
+    for article in articles:
+        news_list.append({
+            "rank": rank_dict[article.id],
+            "title": article.title,
+            "url": article.url,
+        })
+
+    return HttpResponse(json.dumps(news_list))
+
+
 def get_timezone_now():
     now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     now = time.strptime(now, "%Y-%m-%d %H:%M:%S")
     now = datetime.fromtimestamp(mktime(now)).replace(tzinfo=timezone.utc)
     return now
+
+
+def get_host_category_names(request):
+    return HttpResponse(json.dumps({}))
 
 
 def get_now_news(request):
@@ -65,14 +90,15 @@ def get_now_news(request):
     for host in host_list:
         crawler = host_dict[host]()
         crawler.crawl_popular_news_list()
-        all_news[host] = {}
-        all_news[host]["news"] = crawler.category_news_mapper
-        all_news[host]["category_list"] = crawler.category_list
+        all_news[host] = {
+            "news": crawler.category_news_mapper,
+            "category_list": crawler.category_list
+        }
 
     return HttpResponse(json.dumps(all_news))
 
 
-def test(request):
+def db_initializer(request):
     host_list = ["daum", "nate", "naver", "zum"]
     host_dict = {
         "daum": DaumCrawler,
