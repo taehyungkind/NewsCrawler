@@ -75,16 +75,21 @@ def get_timezone_now():
 
 
 def get_host_category_names(request):
+    result = {}
     host_list = Host.objects.all()
+
+    result['host_list'] = [host.name for host in host_list]
     for host in host_list:
         category_list = Category.objects.filter(host=host)
-    print(host_list)
+        result[host.name] = [category.name for category in category_list]
 
-    last_crawl_time = ArticleRank.objects.all().order_by("-time")[0].time.strftime('%Y-%m-%d %H:%M:%S')
-    return HttpResponse(json.dumps({"result": last_crawl_time}))
+    result['last_crawl_time'] = ArticleRank.objects.all().order_by("-time")[0].time.strftime('%Y-%m-%d %H:%M:%S')
+    return HttpResponse(json.dumps(result))
 
 
 def get_now_news(request):
+    result = {}
+
     host_list = ["daum", "nate", "naver", "zum"]
     host_dict = {
         "daum": DaumCrawler,
@@ -93,17 +98,16 @@ def get_now_news(request):
         "zum": ZumCrawler
     }
 
-    all_news = {}
-    all_news["host_list"] = host_list
+    result["host_list"] = host_list
     for host in host_list:
         crawler = host_dict[host]()
         crawler.crawl_popular_news_list()
-        all_news[host] = {
+        result[host] = {
             "news": crawler.category_news_mapper,
             "category_list": crawler.category_list
         }
 
-    return HttpResponse(json.dumps(all_news))
+    return HttpResponse(json.dumps(result))
 
 
 def db_initializer(request):
