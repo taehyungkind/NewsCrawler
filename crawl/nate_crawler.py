@@ -10,7 +10,7 @@ class NateCrawler(Crawler):
         super(self.__class__, self).__init__("http://news.nate.com/rank/interest")
 
     def crawl_popular_news_list(self):
-        self.category_list = ["sisa", "spo", "ent", "pol", "eco", "soc", "int", "its"]
+        self.category_list = ["spo", "ent", "pol", "eco", "soc", "int", "its"]
 
         for category in self.category_list:
             soup = self.get_soup(self.url, {"sc": category})
@@ -49,11 +49,11 @@ class NateCrawler(Crawler):
 
     @staticmethod
     def href_to_id(href):
-        id = re.match(r"/(\w+)/(?P<id>\w+)", urlparse(href).path)
-        return id.group('id')
+        match = re.match(r"/(\w+)/(?P<id>\w+)", urlparse(href).path)
+        return match.group('id')
 
 
 if __name__ == '__main__':
     crawler = NateCrawler()
     crawler.crawl_popular_news_list()
-    crawler.get_category_news_list("sisa")
+    crawler.get_category_news_list("spo")

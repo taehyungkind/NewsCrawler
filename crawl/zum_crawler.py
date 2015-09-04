@@ -13,9 +13,10 @@ class ZumCrawler(Crawler):
     # 카테고리 항목에 맞는 뉴스 리스트를 맵핑시켜준다
     def crawl_popular_news_list(self):
         popular_list = self.soup.find("div", {"class": "list list_1"})
-        self.category_list = [tag.text.strip() for tag in popular_list.find_all("h4")]
+        self.category_list = [tag.text.strip() for tag in popular_list.find_all("h4")][1:]
+        # 종합을 없애기 위해 1부터 짜름
 
-        category_news_list = popular_list.find_all("ul", {"class": "rank_news"})
+        category_news_list = popular_list.find_all("ul", {"class": "rank_news"})[1:]
         for idx, ul_tag in enumerate(category_news_list):
             self.category_news_mapper.setdefault(self.category_list[idx], self.ul_tag_parser(ul_tag))
 
@@ -32,8 +33,8 @@ class ZumCrawler(Crawler):
             article_dict.setdefault("title", tag.get("title"))
             href = tag.get("href")
             article_dict.setdefault("url", urljoin(self.url, href[: href.find("?")]))
-            id = re.match(r"/(\w+)/(?P<id>\d+)", href)
-            article_dict.setdefault("id", id.group('id'))
+            match = re.match(r"/(\w+)/(?P<id>\d+)", href)
+            article_dict.setdefault("id", match.group('id'))
             article_list.append(article_dict)
         return article_list
 
