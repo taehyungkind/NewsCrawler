@@ -14,7 +14,7 @@ class Crawler(object):
     # url을 인풋으로 줬을 때, BeautifulSoup 객체를 반환하는 함수
     @staticmethod
     def get_soup(url, param=None):
-        return BeautifulSoup(requests.get(url, params=param).text)
+        return BeautifulSoup(requests.get(url, params=param).text, "html.parser")
 
     # 카테고리를 찾아서 카테고리 리스트에 넣어두고
     # 카테고리 항목에 맞는 뉴스 리스트를 맵핑시켜준다
