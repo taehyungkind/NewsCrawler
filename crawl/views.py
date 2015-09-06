@@ -12,36 +12,15 @@ from datetime import datetime
 from time import mktime
 import time
 import operator
+
+from NewsCrawler.tasks import crawling
 # Create your views here.
 
 
 @transaction.atomic(using="crawl", savepoint=True)
 def crawl(request):
-    ArticleRank.objects.all().update(view=False)
-
-    host_list = ["daum", "nate", "naver", "zum"]
-    host_dict = {
-        "daum": DaumCrawler,
-        "nate": NateCrawler,
-        "naver": NaverCrawler,
-        "zum": ZumCrawler
-    }
-
-    for host_name in host_list:
-        crawler = host_dict[host_name]()
-        crawler.crawl_popular_news_list()
-
-        host = Host.objects.get(name=host_name)
-        for category_name in crawler.category_list:
-            news_list = crawler.get_category_news_list(category_name)
-            category = Category.objects.get(host=host, name=category_name)
-            for news in news_list:
-                article = Article(id=news['id'], title=news['title'], url=news['url'], host=host)
-                article.save()
-                ArticleRank(article=article, category=category, rank=news['rank'], time=get_timezone_now()).save()
-                # timezone.localtime(timezone.now())).save()
-                # print(news)
-
+    print('test')
+    crawling()
     return HttpResponse(json.dumps({'status': "ok"}))
 
 
