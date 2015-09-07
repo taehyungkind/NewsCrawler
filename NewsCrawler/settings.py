@@ -21,6 +21,8 @@ djcelery.setup_loader()
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+# celery -A NewsCrawler worker -B -l info
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
@@ -137,14 +139,17 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+BROKER_URL = 'django://'
+
 CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
 
-BROKER_URL = 'django://'
+CELERY_IMPORTS = ('NewsCrawler.tasks', )
 
 CELERYBEAT_SCHEDULE = {
     # crontab(hour=0, minute=0, day_of_week='saturday')
-    'NewsCrawler.tasks.crawling': {
-        'task': 'NewsCrawler.tasks.crawling',
-        'schedule': timedelta(minutes=30)
+    'every-30-minute': {
+        'task': 'crawling',
+        'schedule': crontab(minute='*/30')
+            # timedelta(minutes=30)
     },
 }
