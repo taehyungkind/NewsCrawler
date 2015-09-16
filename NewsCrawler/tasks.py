@@ -11,9 +11,11 @@ from datetime import datetime
 import time
 from time import mktime
 from django.utils import timezone
+from django.db import transaction
 
 
 @app.task(bind=True, name="crawling", serializer='json')
+@transaction.atomic(using="crawl", savepoint=True)
 def crawling(self):
     # self가 없으면 Type error 발생한다 원인은 모르겠음
     ArticleRank.objects.all().update(view=False)

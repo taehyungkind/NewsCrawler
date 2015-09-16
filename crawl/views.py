@@ -1,7 +1,6 @@
 # from django.shortcuts import render
 from .models import *
 from django.shortcuts import HttpResponse
-from django.db import transaction
 from .daum_crawler import DaumCrawler
 from .nate_crawler import NateCrawler
 from .naver_crawler import NaverCrawler
@@ -17,7 +16,6 @@ from NewsCrawler.tasks import crawling
 # Create your views here.
 
 
-@transaction.atomic(using="crawl", savepoint=True)
 def crawl(request):
     crawling()
     return HttpResponse(json.dumps({'status': "ok"}))
