@@ -29,10 +29,15 @@ def crawling(self):
     }
 
     for host_name in host_list:
-        crawler = host_dict[host_name]()
-        crawler.crawl_popular_news_list()
-
         host = Host.objects.get(name=host_name)
+        crawler = host_dict[host_name]()
+
+        try:
+            crawler.crawl_popular_news_list()
+        except AttributeError as e:
+            Error(host=host, message=e, time=get_timezone_now()).save()
+            continue
+
         for category_name in crawler.category_list:
             news_list = crawler.get_category_news_list(category_name)
             category = Category.objects.get(host=host, name=category_name)

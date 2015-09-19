@@ -26,3 +26,9 @@ class ArticleRank(models.Model):
     rank = models.IntegerField(null=False)
     time = models.DateTimeField()
     view = models.BooleanField(default=True)
+
+
+class Error(models.Model):
+    host = models.ForeignKey(Host)
+    message = models.CharField(max_length=200)
+    time = models.DateTimeField()
