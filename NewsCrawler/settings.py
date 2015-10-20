@@ -84,16 +84,22 @@ TEMPLATES = [
 WSGI_APPLICATION = 'NewsCrawler.wsgi.application'
 
 
+import json
+with open('keys.json', encoding='utf-8') as key_file:
+    keys = json.loads(key_file.read())
+    key_file.close()
+
+db = keys['aws']['db']
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'HOST': '',
+        'HOST': db['host'],
         'PORT': '3306',
-        'USER': '',
-        'PASSWORD': '',
+        'USER': db['user'],
+        'PASSWORD': db['passwd'],
         'NAME': 'crawl',
         'OPTIONS': {
             'charset': 'utf8',
@@ -101,10 +107,10 @@ DATABASES = {
     },
     'crawl': {
         'ENGINE': 'django.db.backends.mysql',
-        'HOST': '',
+        'HOST': db['host'],
         'PORT': '3306',
-        'USER': '',
-        'PASSWORD': '',
+        'USER': db['user'],
+        'PASSWORD': db['passwd'],
         'NAME': 'crawl',
         'OPTIONS': {
             'charset': 'utf8',
@@ -150,6 +156,5 @@ CELERYBEAT_SCHEDULE = {
     'every-30-minute': {
         'task': 'crawling',
         'schedule': crontab(minute='*/30')
-            # timedelta(minutes=30)
     },
 }
